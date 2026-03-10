@@ -4,6 +4,6 @@ import { protect } from '../middleware/authMiddleware.js';
 
 const hotelRouter = express.Router();
 
-hotelRouter.post("/", protect, registerHotel);
+hotelRouter.post("/register", protect, registerHotel);
 
 export default hotelRouter;
