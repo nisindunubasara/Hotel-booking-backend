@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import mongoose, { connect } from 'mongoose';
 import dotenv from 'dotenv';
 import "dotenv/config";
 import connectDB from './configs/db.js';
