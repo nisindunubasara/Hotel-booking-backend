@@ -5,16 +5,20 @@ const clerkWebhooks = async (req, res) => {
    try {
       
       const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET)
+      console.log("Received webhook:", req.body);
 
       const headers = {
          "svix-id": req.headers["svix-id"],
          "svix-timestamp": req.headers["svix-timestamp"],
          "svix-signature": req.headers["svix-signature"],
       };
+      console.log("Verifying webhook with headers:", headers);
 
       await whook.verify(JSON.stringify(req.body), headers)
+      console.log("Webhook verified successfully");
 
       const {data, type} = req.body
+      console.log("Processing webhook of type:", type, "with data:", data);
 
       const userData = {
          _id: data.id,
@@ -22,28 +26,35 @@ const clerkWebhooks = async (req, res) => {
          username: data.first_name + " " + data.last_name,
          image: data.image_url,
       }
+      console.log("Constructed user data for database operation:", userData);
 
       switch (type) {
          case "user.created":{
             await User.create(userData);
             break;
+            console.log("User created in database with ID:", userData._id);
          }
          case "user.updated":{
             await User.findByIdAndUpdate(data.id, userData);
             break;
+            console.log("User updated in database with ID:", userData._id);
          }
          case "user.deleted":{
             await User.findByIdAndDelete(data.id);
             break;
+            console.log("User deleted from database with ID:", data.id);
          }
          default:
             break;
+            console.log("Unhandled webhook type:", type);
       }
       res.json({success: true, message: "Webhook received successfully"})
+      console.log("Response sent for webhook of type:", type);
 
    }  catch (error) {
       console.log(error.message);
       res.json({success: false, message: error.message});
+      console.log("Error occurred while processing webhook of type:", type);
    }
 }
 
