@@ -31,30 +31,34 @@ const clerkWebhooks = async (req, res) => {
       switch (type) {
          case "user.created":{
             await User.create(userData);
-            break;
             console.log("User created in database with ID:", userData._id);
+            break;
+            
          }
          case "user.updated":{
             await User.findByIdAndUpdate(data.id, userData);
-            break;
             console.log("User updated in database with ID:", userData._id);
+            break;
+           
          }
          case "user.deleted":{
             await User.findByIdAndDelete(data.id);
-            break;
             console.log("User deleted from database with ID:", data.id);
+            break;
+            
          }
          default:
-            break;
             console.log("Unhandled webhook type:", type);
+            break;
+            
       }
       res.json({success: true, message: "Webhook received successfully"})
-      console.log("Response sent for webhook of type:", type);
+      console.log("Response sent for webhook of type:");
 
    }  catch (error) {
       console.log(error.message);
       res.json({success: false, message: error.message});
-      console.log("Error occurred while processing webhook of type:", type);
+      console.log("Error occurred while processing webhook of type:");
    }
 }
 
