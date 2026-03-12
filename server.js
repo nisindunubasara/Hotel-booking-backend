@@ -10,8 +10,8 @@ import hotelRouter from './routes/hotelRoutes.js';
 import connectCloudinary from './configs/cloudinary.js';
 import roomRouter from './routes/roomRoutes.js';
 import bookingsRouter from './routes/bookingsRoutes.js';
-import testRouter from './routes/testRoutes.js';
 
+dotenv.config();
 connectDB();
 connectCloudinary();
 
@@ -28,12 +28,11 @@ app.use("/api/user", userRouter);
 app.use("/api/hotel", hotelRouter);
 app.use("/api/rooms", roomRouter);
 app.use("/api/bookings", bookingsRouter);
-app.use("/api/test", testRouter);
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-dotenv.config();
+
 
 export default app;
