@@ -62,7 +62,7 @@ export const createBooking = async (req, res) => {
       })
 
       const mailOptions = {
-         from: process.env.SENDER_EMAIL,
+         from: process.env.SMTP_USER,
          to: req.user.email,
          subject: "Booking Confirmation",
          html:`
