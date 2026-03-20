@@ -82,6 +82,7 @@ export const createBooking = async (req, res) => {
       }
 
       try {
+         console.log("MAIL OPTIONS:", mailOptions);
          await transporter.sendMail(mailOptions);
       } catch (error) {
          console.log("Mailer error:", error);
