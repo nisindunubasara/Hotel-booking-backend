@@ -81,7 +81,13 @@ export const createBooking = async (req, res) => {
          `
       }
 
-      
+      try {
+         console.log("Sending mail to:", mailOptions.to);
+         await transporter.sendMail(mailOptions);
+         console.log("Booking confirmation mail sent!");
+      } catch (error) {
+         console.log("Mailer error:", error);
+      }
 
       res.json({success: true, message: "Booking created successfully"});
       
