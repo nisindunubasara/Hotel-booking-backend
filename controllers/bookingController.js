@@ -61,7 +61,7 @@ export const createBooking = async (req, res) => {
          totalPrice,
       })
 
-      const mailOptions = {
+      /*const mailOptions = {
          from: process.env.SENDER_EMAIL,
          to: req.user.email,
          subject: "Booking Confirmation",
@@ -87,7 +87,7 @@ export const createBooking = async (req, res) => {
          console.log("Booking confirmation mail sent!");
       } catch (error) {
          console.log("Mailer error:", error);
-      }
+      }*/
 
       res.json({success: true, message: "Booking created successfully"});
       
