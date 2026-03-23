@@ -84,13 +84,11 @@ export const createBooking = async (req, res) => {
          `
       }
 
-      try {
-         console.log("Sending mail to:", mailOptions.to);
-         await transporter.sendMail(mailOptions);
-         console.log("Booking confirmation mail sent!");
-      } catch (error) {
-         console.log("Mailer error:", error.message);
-      }
+      setTimeout(() => {
+         transporter.sendMail(mailOptions)
+         .then(info => console.log("✅ Mail sent:", info.response))
+         .catch(error => console.log("❌ Mail error:", error.message));
+      }, 0);
       
    } catch (error) {
       console.log(error);
