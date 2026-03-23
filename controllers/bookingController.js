@@ -62,8 +62,10 @@ export const createBooking = async (req, res) => {
          paymentMethod,
       })
 
+      res.json({success: true, message: "Booking created successfully"});
+
       const mailOptions = {
-         from: process.env.SENDER_EMAIL,
+         from: process.env.SMTP_USER,
          to: req.user.email,
          subject: "Booking Confirmation",
          html:`
@@ -87,10 +89,8 @@ export const createBooking = async (req, res) => {
          await transporter.sendMail(mailOptions);
          console.log("Booking confirmation mail sent!");
       } catch (error) {
-         console.log("Mailer error:", error);
+         console.log("Mailer error:", error.message);
       }
-
-      res.json({success: true, message: "Booking created successfully"});
       
    } catch (error) {
       console.log(error);
