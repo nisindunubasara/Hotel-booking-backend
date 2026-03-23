@@ -144,9 +144,9 @@ export const getHotelBookings = async (req, res) => {
 
 export const stripePayment = async (req, res) => {
    try {
-      const { bookingId } = req.body;
+      const { booking_Id } = req.body;
 
-      const booking = await Booking.findById(bookingId);
+      const booking = await Booking.findById(booking_Id);
       const roomData = await Room.findById(booking.room).populate("hotel");
       const totalPrice = booking.totalPrice;
       const { origin } = req.headers;
@@ -172,7 +172,7 @@ export const stripePayment = async (req, res) => {
          success_url: `${origin}/loader/my-bookings`,
          cancel_url: `${origin}/my-bookings`,
          metadata: {
-            bookingId,
+            bookingId: booking._id,
          }
       })
       res.json({success: true, url: session.url});
