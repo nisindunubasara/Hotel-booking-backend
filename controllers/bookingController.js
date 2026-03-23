@@ -105,7 +105,7 @@ export const createBooking = async (req, res) => {
 
       res.json({success: true, message: "Booking created successfully"});
 
-      sendBookingConfirmationEmail(req.user.email, req.user.name, booking, roomData);
+      sendBookingConfirmationEmail(req.user.email, req.user.username, booking, roomData);
       
    } catch (error) {
       console.log(error);
