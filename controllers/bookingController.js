@@ -1,7 +1,48 @@
 import Booking from "../models/Booking.js";
 import Hotel from "../models/Hotel.js";
 import Room from "../models/Room.js";
-import transporter from "../configs/nodeMailer.js";
+import axios from "axios";
+
+const sendBookingConfirmationEmail = async (to, username, booking, roomData) => {
+   try {
+      const response = await axios.post(
+         "https://api.brevo.com/v3/smtp/email",
+         {
+            sender: {
+               name: "QuickStay",
+               email: process.env.SENDER_EMAIL,
+            },
+            to: [{ email: to }],
+            subject: "Booking Confirmation",
+            htmlContent: `
+               <h2>Your booking details</h2>
+               <p>Dear ${username},</p>
+               <p>Thank you for your booking! Here are your booking details:</p>
+               <ul>
+                  <li><strong>Booking ID:</strong> ${booking._id}</li>
+                  <li><strong>Hotel Name:</strong> ${roomData.hotel.name}</li>
+                  <li><strong>Location:</strong> ${roomData.hotel.address}</li>
+                  <li><strong>Check-In:</strong> ${new Date(booking.checkInDate).toDateString()}</li>
+                  <li><strong>Check-Out:</strong> ${new Date(booking.checkOutDate).toDateString()}</li>
+                  <li><strong>Total Booking Amount:</strong> ${process.env.CURRENCY || "$"} ${booking.totalPrice}</li>
+               </ul>
+               <p>We look forward to hosting you!</p>
+               <p>If you need to make any changes, please contact us.</p>
+            `,
+         },
+         {
+            headers: {
+               "api-key": process.env.BREVO_API_KEY,
+               "Content-Type": "application/json",
+            },
+         }
+      );
+
+      console.log("✅ Brevo mail sent:", response.data);
+   } catch (error) {
+      console.log("❌ Brevo mail error:", error.response?.data || error.message);
+   }
+};
 
 const checkAvailability = async ({room, checkInDate, checkOutDate}) => {
    try {
@@ -60,42 +101,11 @@ export const createBooking = async (req, res) => {
          checkOutDate,
          totalPrice,
          paymentMethod,
-      })
+      });
 
-
-      console.log("1. booking save una");
-
-      const mailOptions = {
-         from: process.env.SMTP_USER,
-         to: req.user.email,
-         subject: "Booking Confirmation",
-         html:`
-            <h2>Your booking details</h2>
-            <p>Dear ${req.user.username},</p>
-            <p>Thank you for your booking! Here are your booking details:</p>
-            <ul>
-               <li><strong>Booking ID:</strong> ${booking._id}</li>
-               <li><strong>Hotel Name:</strong> ${roomData.hotel.name}</li>
-               <li><strong>Location:</strong> ${roomData.hotel.address}</li>
-               <li><strong>Date:</strong> ${booking.checkInDate ? new Date(booking.checkInDate).toDateString() : "Not set"}</li>
-               <li><strong>Booking Amount:</strong> ${process.env.CURRENCY || '$'} ${booking.totalPrice} </li>
-            </ul>
-            <p>We look forward to hosting you!</p>
-            <p>If you need to make any changes, please contact us.</p>
-         `
-      }
-
-      console.log("2. mail send karanna yanne", mailOptions.to);
-
-      
-      try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log("3. mail sent", info.response);
-      } catch (error) {
-        console.log("3. mail error", error.message);
-      }
-      
       res.json({success: true, message: "Booking created successfully"});
+
+      sendBookingConfirmationEmail(req.user.email, req.user.name, booking, roomData);
       
    } catch (error) {
       console.log(error);
