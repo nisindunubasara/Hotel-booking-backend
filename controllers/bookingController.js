@@ -13,7 +13,7 @@ const checkAvailability = async ({room, checkInDate, checkOutDate}) => {
       const isAvailable = bookings.length === 0;
       return isAvailable;
    } catch (error) {
-      console.error(error.massage);
+      console.error(error.message);
    }
 }
 
@@ -29,7 +29,7 @@ export const checkAvailabilityAPI = async (req, res) => {
 
 export const createBooking = async (req, res) => {
    try {
-      const { room, checkInDate, checkOutDate, guests } = req.body;
+      const { room, checkInDate, checkOutDate, guests, paymentMethod } = req.body;
       const user = req.user._id;
 
       const isAvailable = await checkAvailability({
@@ -59,6 +59,7 @@ export const createBooking = async (req, res) => {
          checkInDate,
          checkOutDate,
          totalPrice,
+         paymentMethod,
       })
 
       /*const mailOptions = {
@@ -113,7 +114,7 @@ export const getHotelBookings = async (req, res) => {
       if(!hotel) {
          return res.json({success: false, message: "Hotel not found"});
       }
-      const bookings = await Booking.find({hotel: hotel._id}).populate("room hotrl user").sort({createdAt: -1});
+      const bookings = await Booking.find({hotel: hotel._id}).populate("room hotel user").sort({createdAt: -1});
 
       const totalBookings = bookings.length;
       const totalRevenue = bookings.reduce((acc, booking) => acc + booking.totalPrice, 0);
