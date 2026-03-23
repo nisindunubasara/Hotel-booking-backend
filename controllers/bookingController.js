@@ -62,7 +62,8 @@ export const createBooking = async (req, res) => {
          paymentMethod,
       })
 
-      res.json({success: true, message: "Booking created successfully"});
+
+      console.log("1. booking save una");
 
       const mailOptions = {
          from: process.env.SMTP_USER,
@@ -84,11 +85,14 @@ export const createBooking = async (req, res) => {
          `
       }
 
-      setTimeout(() => {
-         transporter.sendMail(mailOptions)
-         .then(info => console.log("✅ Mail sent:", info.response))
-         .catch(error => console.log("❌ Mail error:", error.message));
-      }, 0);
+      console.log("2. mail send karanna yanne", mailOptions.to);
+
+      
+      transporter.sendMail(mailOptions)
+      .then(info => console.log("✅ Mail sent:", info.response))
+      .catch(error => console.log("❌ Mail error:", error.message));
+      
+      res.json({success: true, message: "Booking created successfully"});
       
    } catch (error) {
       console.log(error);
