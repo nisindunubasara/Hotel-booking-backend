@@ -145,6 +145,9 @@ export const getHotelBookings = async (req, res) => {
 export const stripePayment = async (req, res) => {
    try {
       const { bookingId } = req.body;
+      console.log("CLICKED:", bookingId);
+      console.log("BODY:", req.body);
+      console.log("BOOKING ID:", bookingId);
 
       const booking = await Booking.findById(bookingId);
       if (!booking) {
